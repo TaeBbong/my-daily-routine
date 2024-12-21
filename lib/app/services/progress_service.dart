@@ -4,7 +4,7 @@ import 'storage_service.dart';
 
 class ProgressService extends GetxService {
   final StorageService _storage = Get.find<StorageService>();
-  final RxMap<DateTime, double> progressCache = <DateTime, double>{}.obs;
+  final progressCache = <DateTime, double>{}.obs;
 
   @override
   void onInit() {
@@ -84,5 +84,12 @@ class ProgressService extends GetxService {
     }
 
     return count > 0 ? sum / count : 0.0;
+  }
+
+  // 진행률 업데이트 메서드
+  Future<void> updateProgress(DateTime date, double progress) async {
+    final dateKey = DateTime(date.year, date.month, date.day);
+    progressCache[dateKey] = progress;
+    await _storage.saveCompletionRate(dateKey, progress);
   }
 }

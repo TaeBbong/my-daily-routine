@@ -46,10 +46,10 @@ class LogTabView extends GetView<LogTabController> {
                 selectedDayPredicate: (day) =>
                     isSameDay(controller.selectedDay.value, day),
                 onDaySelected: controller.onDaySelected,
-                calendarStyle: CalendarStyle(
+                calendarStyle: const CalendarStyle(
                   outsideDaysVisible: false,
-                  weekendTextStyle: const TextStyle(color: Colors.red),
-                  holidayTextStyle: const TextStyle(color: Colors.red),
+                  weekendTextStyle: TextStyle(color: Colors.red),
+                  holidayTextStyle: TextStyle(color: Colors.red),
                 ),
                 calendarBuilders: CalendarBuilders(
                   defaultBuilder: (context, date, _) {

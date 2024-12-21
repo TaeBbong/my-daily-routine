@@ -15,7 +15,14 @@ class LogTabController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('now: ${DateTime.now()}');
     _updateStatistics();
+
+    // ProgressService의 progressCache 변경 감지
+    ever(_progressService.progressCache, (_) {
+      _updateStatistics();
+      update(); // UI 업데이트 트리거
+    });
   }
 
   void _updateStatistics() {
@@ -30,19 +37,18 @@ class LogTabController extends GetxController {
 
     selectedDay.value = selected;
     focusedDay.value = focused;
-
-    // 선택된 날짜의 통계 업데이트
-    _updateStatistics();
   }
 
   // 완료율에 따른 색상 반환
   Color getColorForDate(DateTime date) {
     // 미래 날짜는 흰색 처리
     if (date.isAfter(DateTime.now())) {
+      print('date: $date, rate: 0');
       return AppColors.progress0;
     }
 
     final rate = _progressService.getProgress(date);
+    print('date: $date, rate: $rate');
     if (rate >= 1.0) return AppColors.progress100;
     if (rate >= 0.8) return AppColors.progress80;
     if (rate >= 0.6) return AppColors.progress60;

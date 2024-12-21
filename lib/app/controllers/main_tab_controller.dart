@@ -5,12 +5,14 @@ import 'package:uuid/uuid.dart';
 import '../models/routine.dart';
 import '../views/widgets/routine_dialog.dart';
 import '../services/storage_service.dart';
+import '../services/progress_service.dart';
 
 class MainTabController extends GetxController {
   final RxBool isEditMode = false.obs;
   final RxList<Routine> routines = <Routine>[].obs;
   final Rx<DateTime> currentTime = DateTime.now().obs;
   final StorageService _storage = Get.find<StorageService>();
+  final ProgressService _progressService = Get.find<ProgressService>();
 
   @override
   void onInit() {
@@ -26,9 +28,9 @@ class MainTabController extends GetxController {
   // 루틴 변경시마다 저장하는 메서드
   Future<void> _saveRoutines() async {
     await _storage.saveRoutines(routines);
-    // 오늘의 완료율도 함께 저장
-    final completionRate = _calculateTodayCompletionRate();
-    await _storage.saveCompletionRate(DateTime.now(), completionRate);
+    // 진행률 업데이트
+    final progress = _calculateTodayCompletionRate();
+    await _progressService.updateProgress(DateTime.now(), progress);
   }
 
   // 완료율 계산
@@ -55,6 +57,10 @@ class MainTabController extends GetxController {
       final routine = routines[index];
       routines[index] = routine.copyWith(isDone: !routine.isDone);
       await _saveRoutines();
+
+      // 진행률 업데이트
+      final progress = _calculateTodayCompletionRate();
+      await _progressService.updateProgress(DateTime.now(), progress);
     }
   }
 
